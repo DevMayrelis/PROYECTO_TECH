@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <h1>Formulario</h1>
+    <div id="formulario">
+        <form action="">
+        <div>
+            <label for="Nombre">Nombre</label>
+            <input type="text" id="nombre" class="inputs">
+        </div>
+        <div>
+            <label for="Apellido">Apellido</label>
+            <input type="text" id="Apellido" class="inputs">
+        </div>
+        <div>
+            <label for="Eps">Eps</label>
+            <input type="text" id="eps" class="inputs">
+        </div>
+        <div>
+            <label for="Edad">Edad</label>
+            <input type="number" id="edad" class="inputs">
+        </div>
+        <div>
+            <label for="masculino">
+                <input type="radio" id="masculino" name="sexo">
+                Masculino
+              </label>
+              
+              <label for="femenino">
+                <input type="radio" id="femenino">
+                Femenino
+              </label>
+        </div>
+        <div>
+            <label for="terminos y condiciones">Acepto terminos y condiciones</label>
+            <input type="checkbox">
+        </div>
+            <button type="button" onclick="procesarFormulario()">Enviar</button>
+        </form>
+    </div>
+    <p id="informacion"></p>
+    <script src="./javascript/formulario.js"></script>
+</body>
+</html>
