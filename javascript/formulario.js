@@ -1,43 +1,47 @@
-/*function procesarFormulario(){
-    let nombre = parseFloat(document.getElementById("nombre").value);
-    let apellido = parseFloat(document.getElementById("Apellido").value);
-    let edad = parseFloat(document.getElementById("edad").value);
-
-    let categoriaEdad = 0;
-
-    if (edad > 1 && edad <=15) {
-        categoriaEdad = "Primera infancia";
-    } else if (edad > 15 && edad <=45){
-        categoriaEdad = "Cotizante"
-    } else if (edad > 45 && edad < 70){
-        categoriaEdad = "Adulto mayor"
-    } else {
-        categoriaEdad = "No aplica"
-    }
-
-    document.getElementById("resultado").innerText = informacion;
-    nombre
-    
-}
-*/
-function procesarFormulario() {
+//Funcion 
+function procesa() {
+    // Variables locales: obteniendo los valores de los campos por ID
     let nombre = document.getElementById("nombre").value;
-    let apellido = document.getElementById("Apellido").value;
-    let edad = parseFloat(document.getElementById("edad").value);
+    let apellido = document.getElementById("apellido").value;
+    let eps = document.getElementById("eps").value;
+    let edad = document.getElementById("edad").value;
+    let genero = document.querySelector('input[name="genero"]:checked') ? document.querySelector('input[name="genero"]:checked').value : "No seleccionado";
+    let suscripcion = document.getElementById("suscripcion").checked ? "Sí" : "No";
 
-    let categoriaEdad;
+    // Mostrar los valores procesados en el div de resultado
+    document.getElementById("respuesta").innerText = 
+        "Nombre: " + nombre + "\n" +
+        "Apellido: " + apellido + "\n" +
+        "EPS: " + eps + "\n" +
+        "Edad: " + edad + "\n" +
+        "Rango: " + procesarEdad(edad) + "\n" +
+        "Género: " + genero + "\n" +
+        "Términos: " + suscripcion;
+}
 
-    if (edad > 1 && edad <= 15) {
-        categoriaEdad = "Primera infancia";
-    } else if (edad > 15 && edad <= 45) {
-        categoriaEdad = "Cotizante";
-    } else if (edad > 45 && edad < 70) {
-        categoriaEdad = "Adulto mayor";
-    } else {
-        categoriaEdad = "No aplica";
+function procesarEdad(edad) {
+    if(edad > 1 && edad < 15) {
+        return "Primera infancia";
+    } else if(edad >= 15 && edad < 45) {
+        return "Cotizante";
+    } else if(edad >= 45 && edad < 70) {
+        return "Adulto mayor";
+    } else if(edad >= 70) {
+        return "No aplica";
     }
+}
 
-    let informacion = "Estimado usuario "+nombre+" "+apellido+" su categoria es "+categoriaEdad;
+// Función limpiar formulario
+function limpiarDatos() {
+    // Limpiar todos los campos
+    document.getElementById("nombre").value = "";
+    document.getElementById("apellido").value = "";
+    document.getElementById("eps").selectedIndex = 0;
+    document.getElementById("edad").value = "";
+    document.getElementById("masculino").checked = false;
+    document.getElementById("femenino").checked = false;
+    document.getElementById("suscripcion").checked = false;
 
-    document.getElementById("informacion").innerText = informacion;
+    // Limpiar el resultado mostrado
+    document.getElementById("respuesta").innerText = "";
 }
