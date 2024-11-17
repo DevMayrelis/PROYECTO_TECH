@@ -1,3 +1,18 @@
+const API_URL = "http://localhost:3000/usuarios";
+let usuarioSeleccionadoId = null;
+
+
+  function obtenerUsuarios() {
+    fetch(API_URL)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(usuarios) {
+        console.log(usuarios);
+      });
+  }
+  
+
 //Funcion 
 function procesa() {
     // Variables locales: obteniendo los valores de los campos por ID
@@ -43,5 +58,4 @@ function limpiarDatos() {
     document.getElementById("suscripcion").checked = false;
 
     // Limpiar el resultado mostrado
-    document.getElementById("respuesta").innerText = "";
-}
+    document.getElementById("respuesta").innerText = "";}
