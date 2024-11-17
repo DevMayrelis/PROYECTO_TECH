@@ -1,50 +1,131 @@
 const API_URL = "http://localhost:3000/usuarios";
 let usuarioSeleccionadoId = null;
 
+//Leer los datos de los usuarios y actualizar tabla
+function obtenerUsuarios() {
+  fetch(API_URL)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(usuarios) {
+      actualizarTabla(usuarios);
+    });
+}
 
-  function obtenerUsuarios() {
-    fetch(API_URL)
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(usuarios) {
-        console.log(usuarios);
-      });
-  }
+// Crear usuario
+function crearUsuario() {
+  const usuario = obtenerDatosUsuarios();
   
-
-//Funcion 
-function procesa() {
-    // Variables locales: obteniendo los valores de los campos por ID
-    let nombre = document.getElementById("nombre").value;
-    let apellido = document.getElementById("apellido").value;
-    let eps = document.getElementById("eps").value;
-    let edad = document.getElementById("edad").value;
-    let genero = document.querySelector('input[name="genero"]:checked') ? document.querySelector('input[name="genero"]:checked').value : "No seleccionado";
-    let suscripcion = document.getElementById("suscripcion").checked ? "Sí" : "No";
-
-    // Mostrar los valores procesados en el div de resultado
-    document.getElementById("respuesta").innerText = 
-        "Nombre: " + nombre + "\n" +
-        "Apellido: " + apellido + "\n" +
-        "EPS: " + eps + "\n" +
-        "Edad: " + edad + "\n" +
-        "Rango: " + procesarEdad(edad) + "\n" +
-        "Género: " + genero + "\n" +
-        "Términos: " + suscripcion;
-}
-
-function procesarEdad(edad) {
-    if(edad > 1 && edad < 15) {
-        return "Primera infancia";
-    } else if(edad >= 15 && edad < 45) {
-        return "Cotizante";
-    } else if(edad >= 45 && edad < 70) {
-        return "Adulto mayor";
-    } else if(edad >= 70) {
-        return "No aplica";
+  fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(usuario)
+  })
+  .then(function(response) {
+    if (response.ok) {
+      obtenerUsuarios();
+      limpiarDatos();
+    } else {
+      alert("Error al crear usuario");
     }
+  });
 }
+
+
+
+// Obtener datos del formulario
+function obtenerDatosUsuarios() {
+  return {
+    nombre: document.getElementById("nombre").value,
+    apellido: document.getElementById("apellido").value,
+    eps: document.getElementById("eps").value,
+    edad: parseInt(document.getElementById("edad").value),
+    genero: document.querySelector('input[name="genero"]:checked').value,
+    suscripcion: document.getElementById("suscripcion").checked ? "Sí" : "No"
+  };
+}
+
+
+// Actualizar usuario
+function actualizarUsuario(id) {
+  const usuario = obtenerDatosUsuarios();
+  
+  fetch(API_URL + '/' + id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(usuario)
+  })
+  .then(function(response) {
+    if (response.ok) {
+      obtenerUsuarios();
+      limpiarDatos();
+      document.getElementById("Editar").disabled = true;
+      usuarioSeleccionadoId = null;
+    } else {
+      alert("Error al actualizar usuario");
+    }
+  });
+}
+
+
+// Actualizar la tabla de usuarios
+function actualizarTabla(usuarios) {
+  const tabla = document.getElementById("usuariosTabla");
+  tabla.innerHTML = "";
+
+  usuarios.forEach(function(usuario) {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${usuario.nombre}</td>
+      <td>${usuario.apellido}</td>
+      <td>${usuario.eps}</td>
+      <td>${usuario.edad}</td>
+      <td>${usuario.genero}</td>
+      <td>${usuario.suscripcion}</td>
+      <td>
+        <button onclick="editarUsuario('${usuario._id}')" class="btn btn-secondary">Editar</button>
+        <button onclick="eliminarUsuario('${usuario._id}')" class="btn btn-danger">Eliminar</button>
+      </td>
+    `;
+    tabla.appendChild(fila);
+  });
+}
+
+
+// Cargar los datos del usuario en el formulario para editar
+function editarUsuario(id) {
+  fetch(API_URL + '/' + id)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(usuario) {
+      document.getElementById("nombre").value = usuario.nombre;
+      document.getElementById("apellido").value = usuario.apellido;
+      document.getElementById("eps").value = usuario.eps;
+      document.getElementById("edad").value = usuario.edad;
+      document.getElementById(usuario.genero.toLowerCase()).checked = true;
+      document.getElementById("suscripcion").checked = usuario.suscripcion === "Sí";
+
+      usuarioSeleccionadoId = id; // Guardar ID del usuario seleccionado
+      document.getElementById("confirmarEdicionBtn").disabled = false;
+    });
+}
+
+
+// Confirmar edición
+function confirmarEdicion() {
+  if (usuarioSeleccionadoId) {
+    actualizarUsuario(usuarioSeleccionadoId);
+  }
+}
+
+
+// Cargar usuarios al inicio
+document.addEventListener("DOMContentLoaded", obtenerUsuarios);
 
 // Función limpiar formulario
 function limpiarDatos() {
