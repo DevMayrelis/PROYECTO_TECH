@@ -123,3 +123,6 @@ section {
     margin-right: 250px;
 }
 
+.row {
+    justify-content: space-between;
+}
