@@ -1,20 +1,26 @@
-const API_URL = "http://localhost:3000/usuarios";
+const API_URL = "https://backend-1-bclm.onrender.com/usuarios";
 let usuarioSeleccionadoId = null;
 
-//Leer los datos de los usuarios y actualizar tabla
-function obtenerUsuarios() {
-  fetch(API_URL)
+// Verificar disponibilidad del backend
+function verificarBackend() {
+  fetch(API_URL, { method: "HEAD" }) // HEAD solo verifica si el recurso está disponible
     .then(function(response) {
-      return response.json();
+      if (response.ok) {
+        alert("Backend conectado");
+        obtenerUsuarios(); // Cargar usuarios si el backend está disponible
+      } else {
+        alert("Error: Backend no disponible");
+      }
     })
-    .then(function(usuarios) {
-      actualizarTabla(usuarios);
+    .catch(function(error) {
+      alert("Error: No se pudo conectar con el backend");
+      console.error(error);
     });
 }
 
 // Crear usuario
 function crearUsuario() {
-  const usuario = obtenerDatosUsuarios();
+  const usuario = obtenerDatosFormulario();
   
   fetch(API_URL, {
     method: "POST",
@@ -33,24 +39,20 @@ function crearUsuario() {
   });
 }
 
-
-
-// Obtener datos del formulario
-function obtenerDatosUsuarios() {
-  return {
-    nombre: document.getElementById("nombre").value,
-    apellido: document.getElementById("apellido").value,
-    eps: document.getElementById("eps").value,
-    edad: parseInt(document.getElementById("edad").value),
-    genero: document.querySelector('input[name="genero"]:checked').value,
-    suscripcion: document.getElementById("suscripcion").checked ? "Sí" : "No"
-  };
+// Leer todos los usuarios y mostrarlos en la tabla
+function obtenerUsuarios() {
+  fetch(API_URL)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(usuarios) {
+      actualizarTabla(usuarios);
+    });
 }
-
 
 // Actualizar usuario
 function actualizarUsuario(id) {
-  const usuario = obtenerDatosUsuarios();
+  const usuario = obtenerDatosFormulario();
   
   fetch(API_URL + '/' + id, {
     method: "PUT",
@@ -63,7 +65,7 @@ function actualizarUsuario(id) {
     if (response.ok) {
       obtenerUsuarios();
       limpiarDatos();
-      document.getElementById("Editar").disabled = true;
+      document.getElementById("confirmarEdicionBtn").disabled = true;
       usuarioSeleccionadoId = null;
     } else {
       alert("Error al actualizar usuario");
@@ -71,6 +73,29 @@ function actualizarUsuario(id) {
   });
 }
 
+// Eliminar usuario
+function eliminarUsuario(id) {
+  fetch(API_URL + '/' + id, { method: "DELETE" })
+    .then(function(response) {
+      if (response.ok) {
+        obtenerUsuarios();
+      } else {
+        alert("Error al eliminar usuario");
+      }
+    });
+}
+
+// Obtener datos del formulario
+function obtenerDatosFormulario() {
+  return {
+    nombre: document.getElementById("nombre").value,
+    apellido: document.getElementById("apellido").value,
+    eps: document.getElementById("eps").value,
+    edad: parseInt(document.getElementById("edad").value),
+    genero: document.querySelector('input[name="genero"]:checked').value,
+    suscripcion: document.getElementById("suscripcion").checked ? "Sí" : "No"
+  };
+}
 
 // Actualizar la tabla de usuarios
 function actualizarTabla(usuarios) {
@@ -95,7 +120,6 @@ function actualizarTabla(usuarios) {
   });
 }
 
-
 // Cargar los datos del usuario en el formulario para editar
 function editarUsuario(id) {
   fetch(API_URL + '/' + id)
@@ -115,7 +139,6 @@ function editarUsuario(id) {
     });
 }
 
-
 // Confirmar edición
 function confirmarEdicion() {
   if (usuarioSeleccionadoId) {
@@ -123,20 +146,37 @@ function confirmarEdicion() {
   }
 }
 
+// Filtrar usuarios
+function filtrarUsuarios() {
+  const textoBusqueda = document.getElementById("buscarInput").value.toLowerCase();
+  
+  fetch(API_URL)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(usuarios) {
+      const usuariosFiltrados = usuarios.filter(usuario => 
+        usuario.nombre.toLowerCase().includes(textoBusqueda) || 
+        usuario.apellido.toLowerCase().includes(textoBusqueda)
+      );
+      actualizarTabla(usuariosFiltrados);
+    });
+}
 
 // Cargar usuarios al inicio
-document.addEventListener("DOMContentLoaded", obtenerUsuarios);
+document.addEventListener("DOMContentLoaded", verificarBackend);
 
-// Función limpiar formulario
+// Función para limpiar el formulario
 function limpiarDatos() {
-    // Limpiar todos los campos
-    document.getElementById("nombre").value = "";
-    document.getElementById("apellido").value = "";
-    document.getElementById("eps").selectedIndex = 0;
-    document.getElementById("edad").value = "";
-    document.getElementById("masculino").checked = false;
-    document.getElementById("femenino").checked = false;
-    document.getElementById("suscripcion").checked = false;
+  document.getElementById("nombre").value = "";
+  document.getElementById("apellido").value = "";
+  document.getElementById("eps").selectedIndex = 0;
+  document.getElementById("edad").value = "";
+  document.getElementById("masculino").checked = false;
+  document.getElementById("femenino").checked = false;
+  document.getElementById("suscripcion").checked = false;
 
-    // Limpiar el resultado mostrado
-    document.getElementById("respuesta").innerText = "";}
+  usuarioSeleccionadoId = null;
+  document.getElementById("confirmarEdicionBtn").disabled = true;
+}
+
