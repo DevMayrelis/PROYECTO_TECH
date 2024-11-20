@@ -58,6 +58,7 @@ button.btn {
     transition: background-color 0.3s ease;
 }
 
+/*------BOTON CREAR USUARIO ---- */
 button.btn-primary {
     background-color: #007bff;
     color: white;
@@ -69,6 +70,18 @@ button.btn-primary:hover {
     background-color: #0056b3; 
 }
 
+/*------BOTON ACTUALIZAR ---- */
+button.btn-danger1 {
+    background-color: #35dc59;
+    color: white;
+    border: none;
+}
+
+button.btn-danger1:hover {
+    background-color: #5af380; 
+}
+
+/*------BOTON LIMPIAR ---- */
 button.btn-danger {
     background-color: #4e35dc;
     color: white;
@@ -78,16 +91,6 @@ button.btn-danger {
 
 button.btn-danger:hover {
     background-color: #7b53e9; 
-}
-
-button.btn-danger1 {
-    background-color: #35dc59;
-    color: white;
-    border: none;
-}
-
-button.btn-danger1:hover {
-    background-color: #5af380; 
 }
 /*---------------------------------------------------------------*/
 
@@ -119,3 +122,4 @@ section {
     margin-left: 250px;
     margin-right: 250px;
 }
+
